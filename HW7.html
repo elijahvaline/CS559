@@ -68,8 +68,8 @@
         vec3 n = normalize(uMVn * fragNormal);
         vec3 ColorS  = blinnPhongDir(lightV,n,0.0   ,0.0,     0.0,     specularularC,specularularE).y*lightCol;
         vec3 ColorAD = blinnPhongDir(lightV,n,lightI,ambientC,diffuseC,0.0,      1.0      ).x*texColor;
-        // gl_FragColor = vec4(ColorAD+ColorS,1.0);
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+         gl_FragColor = vec4(ColorAD+ColorS,1.0);
+        //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
       }
     </script>
 

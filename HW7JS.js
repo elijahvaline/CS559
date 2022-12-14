@@ -262,7 +262,8 @@ function start() {
             0.717388,0.428718,
             0.621413,0.288682]);
 
-    var indices = new Uint8Array([ 47,1,1,12,2,2,11,3,3,
+    var indices = new Uint8Array([
+        47,1,1,12,2,2,11,3,3,
         2,4,4,57,5,5,12,2,2,
         58,6,6,1,7,7,6,8,8,
         15,9,9,13,10,10,1,7,7,
@@ -362,7 +363,6 @@ function start() {
         normalIndicesList.push(indices[i * 3 + 2] - 1)
     }
 
-
     var texCoordsList = []
     for (let i = 0; i < vertexPos.length / 3; i++) {
         texCoordsList.push(0)
@@ -375,7 +375,6 @@ function start() {
         texCoordsList[vertIndex * 2] = vertexTextureCoordsRaw[texCoordIndex * 2 ]
         texCoordsList[vertIndex * 2 + 1] = vertexTextureCoordsRaw[texCoordIndex * 2 + 1]
     }
-
 
     var normalsList = []
     for (let i = 0; i < vertexPos.length / 3; i++) {
@@ -411,9 +410,6 @@ function start() {
     gl.bufferData(gl.ARRAY_BUFFER, vertexNormals, gl.STATIC_DRAW);
     triangleNormalBuffer.itemSize = 3;
     triangleNormalBuffer.numItems = vertexPos.length/3;
-
-    // a buffer for colors
-
 
     // a buffer for textures
     var textureBuffer = gl.createBuffer();

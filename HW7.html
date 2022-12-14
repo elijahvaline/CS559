@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebGL cube drawn with indexed vertex list</title>
+  </head>
+
+  <body>
+    <script id="vertexShader" type="not-js">
+      attribute vec3 vertexPosition;
+      attribute vec3 vertexNormal;
+      attribute vec3 vertexColor;
+      attribute vec2 vertexTexCoord;
+      varying vec3 fragPosition;
+      varying vec3 fragColor;
+      varying vec3 fragNormal;
+      varying vec2 fragTexCoord;
+      uniform mat4 uMV;
+      uniform mat4 uMVP;
+
+      void main(void) {
+        gl_Position = uMVP * vec4(vertexPosition, 1.0);
+        fragPosition = (uMV * vec4(vertexPosition, 1.0)).xyz; // In camera coordinates
+        fragColor = vertexColor;
+        fragNormal = vertexNormal;                            // In local coordinates
+        fragTexCoord = vertexTexCoord;
+     }
+    </script>
+
+    <script id="fragmentShader" type="not-js">
+      precision highp float;
+      varying vec3 fragPosition;
+      varying vec3 fragColor;
+      varying vec3 fragNormal;
+      varying vec2 fragTexCoord;
+      uniform mat4 uMV;
+      uniform mat3 uMVn;
+      uniform sampler2D texSampler1;
+      uniform sampler2D texSampler2;
+
+      // const vec3  lightV    = vec3(0.0,1.5,1.0);
+      // const float lightI    = 1.0;
+      // const float ambientC  = 0.2;
+      // const float diffuseC  = 0.7;
+      const float specularularC = 0.9;
+      const float specularularE = 29.0;
+      // const vec3  lightCol  = vec3(0.0,1.0,0.0);
+      // const vec3  objectCol = vec3(1.0,0.6,0.0);
+      const vec3  lightV    = vec3(1.0,1.0,1.0); // stationary light
+      const float lightI     = 1.0;               // only for diffuse component
+      const float ambientC   = 0.1;
+      const float diffuseC   = 1.0;
+      const float diffusion = 10.0;
+      const vec3  lightCol   = vec3(0.5,1.0,1.0);
+      const vec3  objectCol  = vec3(0.2,0.3,0.5);
+
+      vec2 blinnPhongDir(vec3 lightDir, vec3 n, float lightInt, float Ka,
+        float Kd, float Ks, float shininess) {
+        vec3 s = normalize(lightDir);
+        vec3 v = normalize(-fragPosition);
+        vec3 h = normalize(v+s);
+        float diffuse = Ka + Kd * lightInt * max(0.0, dot(n, s));
+        float specular =  Ks * pow(max(0.0, dot(n,h)), shininess);
+        return vec2(diffuse, specular);
+      }
+
+      void main(void) {
+        vec3 texColor=texture2D(texSampler1,fragTexCoord).xyz;
+        vec3 n = normalize(uMVn * fragNormal);
+        vec3 ColorS  = blinnPhongDir(lightV,n,0.0   ,0.0,     0.0,     specularularC,specularularE).y*lightCol;
+        vec3 ColorAD = blinnPhongDir(lightV,n,lightI,ambientC,diffuseC,0.0,      1.0      ).x*texColor;
+        // gl_FragColor = vec4(ColorAD+ColorS,1.0);
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    </script>
+
+    <canvas id="mycanvas" width="500" height="500"></canvas>
+    <br>
+    <input id="slider1" type="range" min="0" max="300" />
+    <input id="slider2" type="range" min="-100" max="100" />
+    <input id="slider3" type="range" min="-100" max="100" />
+    <script type="text/javascript" src="gl-matrix-min.js"></script>
+    <script src="HW7JS.js" id="module"></script>
+  </body>
+</html>
